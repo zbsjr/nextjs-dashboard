@@ -4,8 +4,16 @@ import Link from 'next/link';
 import styles from '@/app/ui/home.module.css';
 import Image from 'next/image';
 import { inter } from '@/app/ui/fonts';
+import { fetchProducts } from '@/app//lib/shopify';
+import { fetchProductsGraphQl } from '@/app//lib/shopify';
 
-export default function Page() {
+export default async function Page() {
+  const data = await fetchProducts();
+  const products = data.products;
+
+  const dataGraphQl = await fetchProductsGraphQl();
+  const productsGraphQl = dataGraphQl.data.products.edges;
+
   return (
     <main className="flex min-h-screen flex-col p-6">
       <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
@@ -22,6 +30,22 @@ export default function Page() {
             </a>
             , brought to you by Vercel. <span className={inter.className}>My font is here</span>
           </p>
+          <div>
+            <h3>Shopify products</h3>
+            <ul>
+            {products.map((p: any) => (
+              <li key={p.id}>{p.title}</li>
+            ))}
+            </ul>
+<br />
+<br />
+            <h3>Shopify products Graph QL</h3>
+            <ul>
+            {productsGraphQl.map((pG: any) => (
+              <li key={pG.node.id}>{pG.node.title}</li>
+            ))}
+            </ul>
+          </div>
           <Link
             href="/login"
             className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
